@@ -34,3 +34,4 @@ cvModelOpt <- function(x, y, weight, cvSet, nlambda=500){
               AUCmean=cvo$cvm[index], 
               AUCsd=cvo$cvsd[index]))
 }
+

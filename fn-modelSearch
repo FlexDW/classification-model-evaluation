@@ -1,0 +1,36 @@
+modelSearch <- function(x, y, alpha, weight, nvars, nlambda){
+# Auxilary function for performing a grid search looking for 
+# models with a desired fixed number of variables (sparse modeling). 
+#
+# Returns: A numeric vector of length nvars, with the indexes 
+#     of the selected variables. Returns zeros if no model selected. 
+# Args:
+# - X:  the regressor matrix (as passed to glmnet)
+# - y:  the binary response vector. Must be 0 or 1 for the weights
+# - alpha: the elastic net mixing parameter (passed to glmnet)
+# - weight: the weighting for positive cases (i.e. y == 1) from 0 to 1.
+# - nvars: the desired number of variables for the models
+# - nlambda: number of lambda parameters glmnet searches. A larger
+#       value means a more granular search but takes longer.
+
+  # Apply the weightings and take the sqrt to smooth them out
+  w <- abs(weight - y)^0.5
+  
+  # Model the data
+  glmo <- glmnet(x, y, 
+                 alpha=alpha,
+                 nlambda=nlambda,
+                 weights=w,
+                 family="binomial")
+
+  # Find models matching criteria and take the first
+  numNonZero <- apply(glmo$beta, 2, function(x) sum(x > 0))
+  index <- which.max(numNonZero == nvars)
+
+  # Return model if successful or return zeros if not
+  if(index > 1){
+    return(as.numeric(which(glmo$beta[, index] > 0)))
+  } else {
+    return(rep(0, 5))
+  }
+}

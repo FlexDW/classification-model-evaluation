@@ -1,0 +1,28 @@
+qdaP <- function(x, mu.T, mu.C, covX.C, covX.T, prior.T=0.5, prior.C=0.5){
+# Return the "probability" of being 'T' for tumor versus 'C' for control
+# for 2-class classification using quadratic discriminant analysis (QDA).
+# Probability is taken to be the inverse logit of the difference in the
+# discriminant scores.
+
+  # obtain x centered by mu of both tumor and control classes
+  if(dim(x)[1] > 1){
+    x0.T <- as.matrix(sweep(x, STATS=mu.T, MARGIN=2, FUN="-"))
+    x0.C <- as.matrix(sweep(x, STATS=mu.C, MARGIN=2, FUN="-"))
+  } else {
+    x0.T <- as.matrix(x - mu.T, nrow=1)
+    x0.C <- as.matrix(x - mu.C, nrow=1)
+  }
+
+  # calculate the determinant and inverse of both covariance matrices
+  det.C <- det(covX.C)
+  det.T <- det(covX.T)
+  icovX.C <- solve(covX.C)
+  icovX.T <- solve(covX.T)
+  
+  # calculate determinant scores
+  dT <- -0.5*log(det.T) - 0.5*rowSums((x0.T %*% icovX.T) * x0.T) + log(prior.T)
+  dC <- -0.5*log(det.C) - 0.5*rowSums((x0.C %*% icovX.C) * x0.C) + log(prior.C)
+
+  # return as probability for class T
+  return(exp(dT - dC)/(1 + exp(dT - dC)))
+}

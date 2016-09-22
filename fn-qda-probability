@@ -19,7 +19,7 @@ qdaP <- function(x, mu.T, mu.C, covX.C, covX.T, prior.T=0.5, prior.C=0.5){
   icovX.C <- solve(covX.C)
   icovX.T <- solve(covX.T)
   
-  # calculate determinant scores
+  # calculate discriminant scores
   dT <- -0.5*log(det.T) - 0.5*rowSums((x0.T %*% icovX.T) * x0.T) + log(prior.T)
   dC <- -0.5*log(det.C) - 0.5*rowSums((x0.C %*% icovX.C) * x0.C) + log(prior.C)
 

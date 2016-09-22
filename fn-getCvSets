@@ -1,0 +1,21 @@
+getCvSets <- function(y, nsets, seed=NULL){
+# Returns cross validation set foldid.
+# Ensures equal cases and controls in each set.
+# Assumes starting order is random enough.
+
+  if(!is.null(seed)){
+    set.seed(seed)
+  }
+  
+  # created vector to order case and controls
+  index <- 1:length(y)
+  index <- c(index[y == 0], index[y == 1])
+  
+  # generate foldids
+  cvSet <- c(sample(rep(1:10, length=sum(y == 0))),
+             sample(rep(1:10, length=sum(y))))
+
+  # reorder according to original vector
+  cvSet <- cvSet[order(index)]
+}
+

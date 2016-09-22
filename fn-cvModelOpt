@@ -1,0 +1,36 @@
+cvModelOpt <- function(x, y, weight, cvSet, nlambda=500){
+# Assumes that variable selection has already been
+# performed and optimizes both likelihood weights and 
+# L2 penalty for AUC. Optimal selected as ave AUC minus one sd.
+# Returns: A list with optimal L2 and weight as well as
+#     the average AUC and the standard deviation across sets.
+# Args:
+# - X:  the regressor matrix (as passed to glmnet)
+# - y:  the binary response vector. Must be 0 or 1 for the weights
+# - weight: the weighting for positive cases (i.e. y == 1) from 0 to 1.
+# - cvSet: cross validation fold index, passed to foldid in cv.glmnet.
+#     mandatory for comparable results across different models.
+# - nlambda: number of lambda parameters glmnet searches. A larger
+#     value means a more granular search but takes longer.
+
+  # apply weight to positive cases and smooth with sqrt
+  w = abs(weight - y)^0.5
+
+  # cross validate model
+  cvo <- cv.glmnet(x, y, 
+                   alpha=0,
+                   nlambda=nlambda,
+                   weights=w,
+                   family="binomial",
+                   type.measure="auc",
+                   foldid=cvSet)
+
+  # select optimal model
+  index <- which.max(cvo$cvm - cvo$cvsd)
+
+  # return values as a list
+  return(list(L2=cvo$lambda[index], 
+              weight=weight, 
+              AUCmean=cvo$cvm[index], 
+              AUCsd=cvo$cvsd[index]))
+}

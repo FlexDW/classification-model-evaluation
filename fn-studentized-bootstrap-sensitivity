@@ -1,0 +1,29 @@
+bootSensitivity <- function(B, bootIndex, x, y, glmo, specificity){
+# Auxilary function for obtaining studentized bootsrap statistics
+# for the function sensitivity:
+# - ".../classification-model-evaluation/master/fn-sensitivity"
+# Args:
+# - B: the current bootstrap sample index
+# - bootIndex: the matrix of bootstrap samples (Bs), in rows.
+# - x: matrix of regressor values
+# - y: binary response vector 0 for control, 1 for cases. 
+# - glmo: the model being evaluated by bootstrap 
+# - specificity: the target specificity passed to fn 'sensitivity()'
+
+  # obtain predictions for current bootsrap sample B
+  p <- predict(glmo, newx=x[B, ], type="response") 
+  
+  # calculate sensitivity statistic based on the predictions
+  Tb <- sensitivity(p, y[B], specificity)
+  
+  # perform inner bootstrap for studentization
+  TbStar <- apply(bootIndex, 1, function(z){
+              subB <- B[z]
+              sensitivity(p=predict(glmo, newx=x[subB,], type="response"),
+                          y[subB],
+                          specificity)
+              })
+  
+  # return bootstrap statistics              
+  return(list(Tb=Tb, seTb=sd(TbStar)))
+}

@@ -1,4 +1,4 @@
-getCvSets <- function(y, nsets, seed=NULL){
+getCvSets <- function(y, nsets, seed=NULL, print=TRUE){
 # Returns cross validation set foldid.
 # Ensures equal cases and controls in each set.
 # Assumes starting order is random enough.
@@ -17,5 +17,12 @@ getCvSets <- function(y, nsets, seed=NULL){
 
   # reorder according to original vector
   cvSet <- cvSet[order(index)]
+  
+  # print allocation per fold
+  if(print){
+    print(table(cvSet, y))
+  }
+  
+  return(cvSet)
 }
 

@@ -14,7 +14,7 @@ cvModelOpt <- function(x, y, weight, cvSet, nlambda=500){
 #     value means a more granular search but takes longer.
 
   # apply weight to positive cases
-  w = abs(weight - y)
+  w = abs(weight - y)^0.5
 
   # cross validate model
   cvo <- cv.glmnet(x, y, 

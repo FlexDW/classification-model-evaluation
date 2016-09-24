@@ -1,0 +1,23 @@
+MCC <- function(prob, cutoff, true){
+# Returns Matthew's Corr Coef for particular probability
+# cutoff.
+# Args:
+# - prob: predicted probability of each sample
+# - cutoff: the chosen cutoff
+# - true: whether sample is truly positive (i.e. y == 1)
+
+  # vector of predicted classification 
+  pred <- prob > cutoff
+
+  # calculate key values
+  TP <- sum(pred & true)
+  FP <- sum(pred & !true)
+  TN <- sum(!pred & !true)
+  FN <- sum(!pred & true)
+  
+  # return MCC: (TP * TN - FP*FN)/sqrt((TP + FP)*(TP + FN)*(TN + FP)*(TN +FN))
+  # note: Broken into segments for calculating large samples without 
+  #       computational issues
+  return((TP * ((TN)/(sqrt(TP + FP)*sqrt(TP + FN)*sqrt(TN + FP)*sqrt(TN +FN)))) - 
+    (FP * ((FN)/(sqrt(TP + FP)*sqrt(TP + FN)*sqrt(TN + FP)*sqrt(TN +FN)))))
+}

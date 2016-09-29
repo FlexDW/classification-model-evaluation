@@ -31,6 +31,6 @@ modelSearch <- function(x, y, alpha, weight, nvars, nlambda){
   if(index > 1){
     return(as.numeric(which(glmo$beta[, index] > 0)))
   } else {
-    return(rep(0, 5))
+    return(rep(0, nvars))
   }
 }

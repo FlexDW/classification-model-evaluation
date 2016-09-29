@@ -1,0 +1,39 @@
+sensitivity <- function(p, y, specificity){
+# Returns the sensitivity of model predictions
+# at a target value for specificity.
+  
+  # order predictions and actuals by the prediction values 
+  idx <- order(p)
+  p <- p[idx]
+  y <- y[idx]
+  
+  # calculate the number of errors allowed on control set
+  ctrlErrs <- floor(sum(y == 0) * (1 - specificity))
+  
+  # find cutoff value matching target specificity
+  cutoff <- rev(p[y == 0])[ctrlErrs]
+  
+  # return sensitivity or TPR given cutoff
+  return(mean(p[y == 1] >= cutoff))
+}
+
+
+specificity <- function(p, y, sensitivity){
+  # Returns the specificity of model predictions
+  # at a target value for sensitivity.
+  
+  # order predictions and actuals by the prediction values 
+  idx <- order(p)
+  p <- p[idx]
+  y <- y[idx]
+  
+  # calculate the number of errors allowed on control set
+  caseErrs <- floor(sum(y == 1) * (1 - sensitivity))
+  
+  # find cutoff value matching target specificity
+  cutoff <- p[y == 1][caseErrs]
+  
+  # return sensitivity or TPR given cutoff
+  return(mean(p[y == 0] <= cutoff))
+}
+

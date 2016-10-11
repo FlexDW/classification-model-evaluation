@@ -1,4 +1,4 @@
-sensitivity <<- function(p, y, specificity){
+sensitivity <- function(p, y, specificity){
 # Returns the sensitivity of model predictions
 # at a target value for specificity.
   
